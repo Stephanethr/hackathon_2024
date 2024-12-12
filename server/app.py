@@ -43,14 +43,14 @@ def get_interface():
 
     # Construire le JSON des métadonnées
     interface_data = []
-    for selection in selected_selections:
+    for index, selection in enumerate(selected_selections, start=1):
         selection_path = os.path.join(app.config['IMAGE_FOLDER'], selection)
         images = [
             {"image": image} for image in os.listdir(selection_path)
             if os.path.isfile(os.path.join(selection_path, image))
         ]
 
-        interface_data.append({"selection": selection, "images": images})
+        interface_data.append({"selection": index, "images": images})
 
     return jsonify(interface_data)
 
