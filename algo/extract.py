@@ -25,30 +25,6 @@ PONDERATION = {
     "presenceGraphiques":0.7 #bool
 }
 
-#Extraction json
-def extractData(jsonFile)->list:
-    with open(jsonFile) as f:
-        d = json.load(f)
-    return d
-
-#fonction pour retourner les critères selon les choix
-def returnDataChoice(choice:dict,pictureList:dict)->list:
-    listChoix = np.array([])
-    for value in choice:
-        listChoix = np.append(pictureList[value])
-    return listChoix
-
-#retourne la valeur choisie d'un dictionnaire
-def getValues(firstKey:dict,secondKey:str):
-    return firstKey[secondKey]
-
-#retourne la valeure qui a une récurrence maximale selon la clé
-def returnMaxValues(listChoice,key:str):
-    liste = []
-    for e in listChoice:
-        liste.append(getValues(e,key))
-    return max(Counter(liste),key=Counter(liste).get)
-
 #retourne le score de comparaison entre deux valeurs de même clé de deux dictionnaires
 def comparaison(dictChoice:dict, dictBase:dict,value:str)->int:
     if dictChoice[value]==dictBase[value]:
@@ -62,24 +38,39 @@ def conversionHex(hexColor:str)->list:
 
 #comparaisonHexadecimal
 def comparaisonHex(dictChoice:dict,dictBase:dict,value:str)->float:
-    value = 0
+    res = 0
     rgbChoice = conversionHex(dictChoice[value])
     rgbBase = conversionHex(dictBase[value])
     for i in range(len(rgbChoice)):
-        value += min(rgbChoice[i],rgbBase[i])/max(rgbChoice[i],rgbBase[i])
-    return value/len(rgbChoice)
+        res += min(rgbChoice[i],rgbBase[i])/max(rgbChoice[i],rgbBase[i])
+    return res/len(rgbChoice)
 
+def comparaisonHexList(listChoice:list,listBase:list)->float:
+    res = 0
+    for i in range(len(listChoice)):
+        rgbChoice = conversionHex(listChoice[i])
+        rgbBase = conversionHex(listBase[i])
+        for j in range(len(listChoice)):
+            res += min(rgbChoice[j],rgbBase[j])/max(rgbChoice[j],rgbBase[j])
+        return res/9
+    
 #comparaisonfloat
 def comparaisonFloat(dictChoice:dict,dictBase:dict,value:str)->float:
     return min(dictChoice[value],dictBase[value])/max(dictChoice[value],dictBase[value])
 
-
-def main(jsonChoices):
-    #dictionnare du json des images
-    pictureDict = extractData('test.json')
-    #copie de la liste précédente qui sera manipulée
-    pictureTri = pictureDict.deepcopy()
-    #on retourne une liste des choix et leurs valeurs
-    listChoice = returnDataChoice(extractData(jsonChoices),pictureDict)
-    #
+#return score
+def score(dictChoice:dict,dictBase:dict)->float:
+    global PONDERATION
+    value = 0
+    for e in dictBase:
+        if isinstance(e,str) or isinstance(e,bool):
+            res = comparaison(dictBase,dictChoice,e)
+        elif isinstance(e,float):
+            res = comparaisonFloat(dictChoice,dictBase,e)
+        elif isinstance(e,list):
+            res = comparaisonHexList(dictChoice[e], dictBase[e])
+        else:
+            res = comparaisonHex(dictChoice,dictBase,e)
+        value += res * PONDERATION[e]
+    return value
     
