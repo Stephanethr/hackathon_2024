@@ -15,22 +15,41 @@ app.config['IMAGE_FOLDER'] = IMAGE_FOLDER
 app.config['GB_FOLDER'] = GB_FOLDER
 
 
-count = 0
+# Variable globale pour gérer l'index des dernières listes envoyées
+last_index = 0
 
-
-# Route : getInterface (GET pour envoyer les images contenues dans les dossiers de sélection)
+# Route : getInterface (GET pour envoyer les images par lot de 3 sélections à chaque appel)
 @app.route('/getInterface', methods=['GET'])
 def get_interface():
+    global last_index
     boundary = "----WebKitFormBoundary"  # Définir une limite pour séparer les parties form-data
     buffer = io.BytesIO()
 
+    # Récupérer toutes les sélections disponibles
+    all_selections = [
+        selection for selection in os.listdir(app.config['IMAGE_FOLDER'])
+        if os.path.isdir(os.path.join(app.config['IMAGE_FOLDER'], selection))
+    ]
+
+    # Limiter à 3 sélections, en utilisant un modulo pour boucler
+    num_selections = len(all_selections)
+    if num_selections == 0:
+        return jsonify({"error": "No selections available"}), 400
+
+    selected_selections = [
+        all_selections[(last_index + i) % num_selections] for i in range(3)
+    ]
+    last_index = (last_index + 3) % num_selections
+
     # Construire le JSON des métadonnées
     interface_data = []
-    for selection in os.listdir(app.config['IMAGE_FOLDER']):
+    for selection in selected_selections:
         selection_path = os.path.join(app.config['IMAGE_FOLDER'], selection)
-        if os.path.isdir(selection_path):
-            images = [image for image in os.listdir(selection_path) if os.path.isfile(os.path.join(selection_path, image))]
-            interface_data.append({"selection": selection, "images": images})
+        images = [
+            image for image in os.listdir(selection_path)
+            if os.path.isfile(os.path.join(selection_path, image))
+        ]
+        interface_data.append({"selection": selection, "images": images})
 
     # Ajouter le JSON comme une partie form-data
     json_data = json.dumps(interface_data)
@@ -41,18 +60,17 @@ def get_interface():
     buffer.write("\r\n".encode())
 
     # Ajouter les images comme parties form-data
-    for selection in os.listdir(app.config['IMAGE_FOLDER']):
+    for selection in selected_selections:
         selection_path = os.path.join(app.config['IMAGE_FOLDER'], selection)
-        if os.path.isdir(selection_path):
-            for image in os.listdir(selection_path):
-                image_path = os.path.join(selection_path, image)
-                if os.path.isfile(image_path):
-                    with open(image_path, "rb") as img_file:
-                        buffer.write(f"--{boundary}\r\n".encode())
-                        buffer.write(f"Content-Disposition: form-data; name=\"images\"; filename=\"{image}\"\r\n".encode())
-                        buffer.write("Content-Type: image/png\r\n\r\n".encode())
-                        buffer.write(img_file.read())
-                        buffer.write("\r\n".encode())
+        for image in os.listdir(selection_path):
+            image_path = os.path.join(selection_path, image)
+            if os.path.isfile(image_path):
+                with open(image_path, "rb") as img_file:
+                    buffer.write(f"--{boundary}\r\n".encode())
+                    buffer.write(f"Content-Disposition: form-data; name=\"images\"; filename=\"{image}\"\r\n".encode())
+                    buffer.write("Content-Type: image/png\r\n\r\n".encode())
+                    buffer.write(img_file.read())
+                    buffer.write("\r\n".encode())
 
     # Terminer la réponse form-data
     buffer.write(f"--{boundary}--\r\n".encode())
