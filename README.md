@@ -1,3 +1,3 @@
 # hackathon_2024
 
-L'équipz gagante
+L'équipe gagnante
