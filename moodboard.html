@@ -315,15 +315,20 @@ c60 -45 68 -74 68 -239 0 -172 -11 -208 -73 -247 -31 -19 -50 -22 -114 -21
         // Fonction pour charger les données JSON
         async function loadImages() {
             try {
-                // Charger le fichier JSON
-                const response = await fetch('./response.json');
-                if (!response.ok) throw new Error('Erreur lors du chargement du JSON');
+                const url = "http://127.0.0.1:5000/getInterface";
+                const response = await fetch(url);
+                // Vérifier si la réponse est OK
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP ! Statut : ${response.status}`);
+                }
+
+                // Convertir la réponse en JSON
                 const jsonData = await response.json();
+                console.log(jsonData)
                 let number = parseInt(getQueryParam("number")) || 1;
 
                 const prevButtonContainer = document.querySelector("#prev_button_link_container");
                 const prevButton = document.querySelector("#prev_button_link");
-                console.log(number)
                 if (number > 1) {
                     prevButton.href = `?number=${number - 1}`;
 
@@ -334,7 +339,8 @@ c60 -45 68 -74 68 -239 0 -172 -11 -208 -73 -247 -31 -19 -50 -22 -114 -21
                 }
                 // Filtrer pour trouver uniquement "selection1"
                 const selection = "selection" + number;
-                const selection1 = jsonData.find(group => group.selection === selection);
+                const selection1 = jsonData.find(group => group.selection%3 === selection);
+                console.log(selection1)
     
                 // Sélectionner le conteneur
                 const container = document.querySelector('.img-mood-container');
@@ -343,7 +349,7 @@ c60 -45 68 -74 68 -239 0 -172 -11 -208 -73 -247 -31 -19 -50 -22 -114 -21
                 if (selection1) {
                     selection1.images.forEach(imageObj => {
                         const img = document.createElement('img');
-                        img.src = `./mobbin/${imageObj.image}`;
+                        img.src = `./images_selection/${selection}/${imageObj.image}`;
                         img.className = 'img_mood';
                         container.appendChild(img);
 

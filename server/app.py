@@ -5,9 +5,12 @@ import json
 from werkzeug.datastructures import FileStorage
 import base64
 # from algo import algo
+from flask_cors import CORS
+
+# Activer CORS sur l'application Flask
 
 app = Flask(__name__)
-
+CORS(app)
 # Dossier contenant les images par sélections
 IMAGE_FOLDER = "../images_selection"
 GB_FOLDER = "../images_gb"
