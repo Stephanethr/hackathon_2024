@@ -3190,12 +3190,4 @@ button {
     src: local(''), url('https://portal.ww-cdn.com/portal_static/2021/fonts2021/LIGHT/PlusJakartaSans-ExtraBoldItalic.9f1d4dcc2fdd.woff2') format('woff2'), url('https://portal.ww-cdn.com/portal_static/2021/fonts2021/LIGHT/PlusJakartaSans-ExtraBoldItalic.75ceae9d1dda.woff') format('woff'), url('https://portal.ww-cdn.com/portal_static/2021/fonts2021/LIGHT/PlusJakartaSans-ExtraBoldItalic.a9c28b42f8db.ttf') format('truetype')
 }
 
-.img_mood {
-    height: 600px;
-}
 
-.img-mood-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-}
