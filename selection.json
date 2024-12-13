@@ -2,15 +2,15 @@
     {
       "images": [
         {
-          "image": "a screens 0.png",
+          "image": "a screens 6.png",
           "is_selected": true
         },
         {
-          "image": "a screens 1.png",
+          "image": "a screens 2.png",
           "is_selected": false
         },
         {
-          "image": "a screens 18.png",
+          "image": "a screens 10.png",
           "is_selected": false
         },
         {
@@ -22,8 +22,8 @@
     {
       "images": [
         {
-          "image": "a screens 19.png",
-          "is_selected": false
+          "image": "a screens 5.png",
+          "is_selected": true
         },
         {
           "image": "a screens 3.png",
@@ -34,8 +34,8 @@
           "is_selected": false
         },
         {
-          "image": "a screens 5.png",
-          "is_selected": true
+          "image": "a screens 2.png",
+          "is_selected": false
         }
       ]
     },
@@ -46,15 +46,15 @@
           "is_selected": false
         },
         {
-          "image": "a screens 6.png",
+          "image": "a screens 9.png",
           "is_selected": false
         },
         {
-          "image": "a screens 7.png",
+          "image": "a screens 8.png",
           "is_selected": true
         },
         {
-          "image": "a screens 8.png",
+          "image": "a screens 22.png",
           "is_selected": false
         }
       ]
