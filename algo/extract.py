@@ -1,6 +1,3 @@
-import json
-import numpy as np
-from collections import Counter
 from PIL import ImageColor
 
 PONDERATION = {
