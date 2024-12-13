@@ -21,11 +21,13 @@ def get_criteria_for_image(image_name, criteria_list):
     return None
 
 # Construire une liste de dictionnaires pour les images sélectionnées
-def build_selected_images_criteria(criteria_file, selections_data):
+def build_selected_images_criteria(criteria_file, selections_file):
     criteria_list = load_criteria(criteria_file)
+    selections_list = load_selections(selections_file)
 
     selected_images = []
-    for selection in selections_data:
+
+    for selection in selections_list:
         for image in selection["images"]:
             if image["is_selected"]:
                 image_name = image["image"]
@@ -66,20 +68,21 @@ def build_dictionaries(selections_data):
 
     return selected_images, all_images
 
-def main(selections_data):
-    selected_images, all_images = build_dictionaries(selections_data)
+def main(json):
+    selected_images, all_images = build_dictionaries(json)
     max_score = 0
     max_image_name = None
 
     for gb_image in all_images:
         score = 0
         for selected_image in selected_images:
-            score += extract.score(selected_image, gb_image)
+            score += extract.score(selected_image['criteria'], gb_image['criteria'])
         score /= len(selected_images)
 
         if score > max_score:
             max_score = score
             max_image_name = gb_image["image"]
 
-    return max_image_name
+    print(max_image_name)
+    print(max_score)
 
