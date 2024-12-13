@@ -289,7 +289,7 @@
         }  
     },
       {
-        "image": "localdelivery_345_tabbar_withmenu.webp",
+        "image": "localdelivery_345_tabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "eshop",
             "typeMENU": "lineaire",
@@ -313,7 +313,7 @@
         }  
     },
       {
-        "image": "internalcom_225_floatingtabbar_withmenu.webp",
+        "image": "internalcom_225_floatingtabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "dashboard",
             "typeMENU": "barre_flottante",
@@ -337,7 +337,7 @@
         }  
     },
       {
-        "image": "internalcom_288_tabbar_withmenu.webp",
+        "image": "internalcom_288_tabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "vitrine",
             "typeMENU": "lineaire",
@@ -361,7 +361,7 @@
         }  
     },
       {
-        "image": "internalcom_369_floatingtabbar_withmenu.webp",
+        "image": "internalcom_369_floatingtabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "blog",
             "typeMENU": "barre_flottante",
@@ -385,7 +385,7 @@
         }  
     },
       {
-        "image": "internalcom_380_floatingtabbar_withmenu.webp",
+        "image": "internalcom_380_floatingtabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "vitrine",
             "typeMENU": "barre_flottante",
@@ -409,7 +409,7 @@
         }  
     },
       {
-        "image": "localdelivery_345_floatingtabbar_withmenu.webp",
+        "image": "localdelivery_345_floatingtabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "eshop",
             "typeMENU": "barre_flottante",
@@ -434,7 +434,7 @@
     },
 
       {
-        "image": "nonprofit_330_tabbar_withmenu.webp",
+        "image": "nonprofit_330_tabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "vitrine",
             "typeMENU": "barre_flottante",
@@ -458,7 +458,7 @@
         }  
     },
       {
-        "image": "newspaper_225_floatingtabbar_withmenu.webp",
+        "image": "newspaper_225_floatingtabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "blog",
             "typeMENU": "barre_flottante",
@@ -482,7 +482,7 @@
         }  
     },
       {
-        "image": "newspaper_380_tabbar_withmenu.webp",
+        "image": "newspaper_380_tabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "blog",
             "typeMENU": "barre_flottante",
@@ -506,7 +506,7 @@
         }  
     },
       {
-        "image": "newspaper_386_floatingtabbar_withmenu.webp",
+        "image": "newspaper_386_floatingtabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "blog",
             "typeMENU": "barre_flottante",
@@ -530,7 +530,7 @@
         }  
     },
       {
-        "image": "nonprofit_232_tabbar_withmenu.webp",
+        "image": "nonprofit_232_tabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "vitrine",
             "typeMENU": "barre_flottante",
@@ -554,7 +554,7 @@
         }  
     },
       {
-        "image": "nonprofit_240_floatingtabbar_withmenu.webp",
+        "image": "nonprofit_240_floatingtabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "vitrine",
             "typeMENU": "barre_flottante",
@@ -578,7 +578,7 @@
         }  
     },
       {
-        "image": "onlinecourses_235_floatingtabbar_withmenu.webp",
+        "image": "onlinecourses_235_floatingtabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "vitrine",
             "typeMENU": "barre_flottante",
@@ -602,7 +602,7 @@
         }  
     },
       {
-        "image": "restaurant_331_tabbar_withmenu.webp",
+        "image": "restaurant_331_tabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "restaurant",
             "typeMENU": "lineaire",
@@ -626,7 +626,7 @@
         }  
     },
       {
-        "image": "restaurant_348_tabbar_withmenu.webp",
+        "image": "restaurant_348_tabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "restaurant",
             "typeMENU": "lineaire",
@@ -650,7 +650,7 @@
         }  
     },
       {
-        "image": "restaurant_351_floatingtabbar_withmenu.webp",
+        "image": "restaurant_351_floatingtabbar_withmenu@2x.webp",
         "criteria" : {
             "typeSite": "restaurant",
             "typeMENU": "barre_flottante",
