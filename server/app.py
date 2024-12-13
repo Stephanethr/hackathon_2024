@@ -5,9 +5,12 @@ import json
 from werkzeug.datastructures import FileStorage
 import base64
 # from algo import algo
+from flask_cors import CORS
+
+# Activer CORS sur l'application Flask
 
 app = Flask(__name__)
-
+CORS(app)
 # Dossier contenant les images par sélections
 IMAGE_FOLDER = "../images_selection"
 GB_FOLDER = "../images_gb"
@@ -40,14 +43,14 @@ def get_interface():
 
     # Construire le JSON des métadonnées
     interface_data = []
-    for selection in selected_selections:
+    for index, selection in enumerate(selected_selections, start=1):
         selection_path = os.path.join(app.config['IMAGE_FOLDER'], selection)
         images = [
             {"image": image} for image in os.listdir(selection_path)
             if os.path.isfile(os.path.join(selection_path, image))
         ]
 
-        interface_data.append({"selection": selection, "images": images})
+        interface_data.append({"selection": index, "images": images})
 
     return jsonify(interface_data)
 
