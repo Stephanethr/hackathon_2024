@@ -21,22 +21,20 @@ def get_criteria_for_image(image_name, criteria_list):
     return None
 
 # Construire une liste de dictionnaires pour les images sélectionnées
-def build_selected_images_criteria(criteria_file, selections_data):
+def build_selected_images_criteria(criteria_file, selected_images):
     criteria_list = load_criteria(criteria_file)
+    processed_images = []
 
-    selected_images = []
-    for selection in selections_data:
-        for image in selection["images"]:
-            if image["is_selected"]:
-                image_name = image["image"]
-                criteria = get_criteria_for_image(image_name, criteria_list)
-                if criteria:
-                    selected_images.append({
-                        "image": image_name,
-                        "criteria": criteria
-                    })
+    for image in selected_images:
+        image_name = image["image"]
+        criteria = get_criteria_for_image(image_name, criteria_list)
+        if criteria:
+            processed_images.append({
+                "image": image_name,
+                "criteria": criteria
+            })
 
-    return selected_images
+    return processed_images
 
 # Construire une liste de dictionnaires pour toutes les images d'un fichier de critères
 def build_all_images_criteria(criteria_file):
@@ -66,20 +64,36 @@ def build_dictionaries(selections_data):
 
     return selected_images, all_images
 
-def main(selections_data):
-    selected_images, all_images = build_dictionaries(selections_data)
+
+def preparedata(selections_data):
+    selected_images = []
+
+    for item in selections_data:
+        for image_info in item["images"]:
+            if image_info["is_selected"]:
+                selected_images.append(image_info)
+
+    return selected_images
+
+
+def main(json):
+    data = preparedata(json)
+    print(data)
+    selected_images, all_images = build_dictionaries(data)
     max_score = 0
     max_image_name = None
 
     for gb_image in all_images:
         score = 0
         for selected_image in selected_images:
-            score += extract.score(selected_image, gb_image)
+            score += extract.score(selected_image['criteria'], gb_image['criteria'])
         score /= len(selected_images)
 
         if score > max_score:
             max_score = score
             max_image_name = gb_image["image"]
 
+    print(max_image_name)
+    print(max_score)
     return max_image_name
 
