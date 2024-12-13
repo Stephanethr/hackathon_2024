@@ -3,8 +3,8 @@ from PIL import ImageColor
 PONDERATION = {
     "typeSite":10, #str
     "typeMENU":0.3, #str
-    "couleurDominante":6, #Hex
-    "paletteCouleurs":4, #Hex
+    "couleurDominante":8, #Hex
+    "paletteCouleurs":6, #Hex
     "contraste":2, #float
     "scroll":0.1, #str
     "nbElement":0.05, #int
@@ -49,8 +49,9 @@ def comparaisonHexList(listChoice:list,listBase:list)->float:
         rgbChoice = conversionHex(listChoice[i])
         rgbBase = conversionHex(listBase[i])
         for j in range(len(listChoice)):
-            res += min(rgbChoice[j],rgbBase[j])/max(rgbChoice[j],rgbBase[j])
-        return res/9
+            res += (min(rgbChoice[j],rgbBase[j])+1)/(max(rgbChoice[j],rgbBase[j])+1)
+    return res/9
+ #pour la liste le return est en dehors de la boucle i, et j'ai rajouté un +1 car il y avait de la division par 0 par moment
     
 #comparaisonfloat
 def comparaisonFloat(dictChoice:dict,dictBase:dict,value:str)->float:
@@ -61,14 +62,17 @@ def score(dictChoice:dict,dictBase:dict)->float:
     global PONDERATION
     value = 0
     for e in dictBase:
-        if isinstance(e,str) or isinstance(e,bool):
-            res = comparaison(dictBase,dictChoice,e)
-        elif isinstance(e,float):
+        if isinstance(dictBase[e],str):
+            if dictBase[e][0]=='#':
+                res = comparaisonHex(dictChoice,dictBase,e)
+            else:
+                res = comparaison(dictBase,dictChoice,e)
+        elif isinstance(dictBase[e],bool):
+            res = comparaison(dictBase, dictChoice, e)
+        elif isinstance(dictBase[e],float):
             res = comparaisonFloat(dictChoice,dictBase,e)
-        elif isinstance(e,list):
+        elif isinstance(dictBase[e],list):
             res = comparaisonHexList(dictChoice[e], dictBase[e])
-        else:
-            res = comparaisonHex(dictChoice,dictBase,e)
         value += res * PONDERATION[e]
     return value
     
