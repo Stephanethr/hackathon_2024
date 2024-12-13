@@ -60,6 +60,7 @@ def send_result():
 
         # Appelle algo.main avec les données
         result_image = algo.main(data)
+        print(result_image)
         return jsonify({"image": result_image})
 
     except Exception as e:

@@ -296,7 +296,7 @@ c60 -45 68 -74 68 -239 0 -172 -11 -208 -73 -247 -31 -19 -50 -22 -114 -21
                 </div>
                 <h1 class="lpblock-title">Soyez inspiré et laissez nous donner forme à vos envies</hjson class="lpblock-text">
                 <h3 class="lpblock-subtitle">Choisissez l'interface qui vous inspire le plus :</h3>
-                <div class="creation_step_container-mobileback" id="prev_button_link_container"><img class="creation_step_container-mobileback-icon" loading="lazy" width="20" height="20" src="https://portal.ww-cdn.com/portal_static/svg/fapro/light/chevron-left.12142ccf5da5.svg" alt=""><a class="creation_step_container-mobileback-label" id="prev_button_link" href='?number=${number - 1}'>Retour</a></div>
+                <div class="creation_step_container-mobileback" id="prev_button_link_container"><img class="creation_step_container-mobileback-icon" loading="lazy" width="20" height="20" src="https://portal.ww-cdn.com/portal_static/svg/fapro/light/chevron-left.12142ccf5da5.svg" alt=""><a class="creation_step_container-mobileback-label" id="prev_button_link" href='?number=${number - 1}'></a></div>
                 <div class="img-mood-container"></div>
                 <div class="creation_step_next_button" id="next_button">
                     <div style="display: flex;"><a class="gbcta gbcta--lvlone" id="next_button_link" style="padding: 0px 80px;cursor: pointer;" href="#"><span class="gbcta-txt">Suivant</span></a></div>
@@ -308,254 +308,266 @@ c60 -45 68 -74 68 -239 0 -172 -11 -208 -73 -247 -31 -19 -50 -22 -114 -21
 
     <script>
         let selectedImages = [];
+
         async function loadImages() {
-    try {
-        let number = parseInt(getQueryParam("number")) || 1;
+            try {
+                let number = parseInt(getQueryParam("number")) || 1;
 
-        // Si `number` est égal à 4, envoyer directement les données et sortir
-        if (number === 4) {
-            updateProgress(number);
-            console.log("Envoi des données au serveur...");
-            console.log(selectedImages);
-            await sendDataToServer(selectedImages);
-            return;
-        }
-
-        const url = "http://127.0.0.1:5000/getInterface";
-
-        let jsonData = localStorage.getItem('cachedData');
-
-        if (!jsonData) {
-            console.log("Fetching data from API...");
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`Erreur HTTP ! Statut : ${response.status}`);
-            }
-
-            jsonData = await response.json();
-            localStorage.setItem('cachedData', JSON.stringify(jsonData));
-        } else {
-            console.log("Using cached data...");
-            jsonData = JSON.parse(jsonData);
-        }
-
-        // Charger les sélections précédentes du cache
-        const cachedSelections = localStorage.getItem('selectedImages');
-        if (cachedSelections) {
-            selectedImages = JSON.parse(cachedSelections);
-        }
-
-        // Réinitialiser les sélections pour la page actuelle
-        resetSelectionsForPage(number);
-
-        const prevButtonContainer = document.querySelector("#prev_button_link_container");
-        const prevButton = document.querySelector("#prev_button_link");
-        if (number === 4) {
-            prevButton.href = `?number=1`;
-        } else if (number > 1) {
-            prevButton.href = `?number=${number - 1}`;
-        } else {
-            prevButtonContainer.style.display = "none";
-        }
-
-        const selection1 = jsonData.find(group => group.selection === number);
-        const container = document.querySelector('.img-mood-container');
-        container.innerHTML = "";
-
-        if (selection1) {
-            initializeSelection(number, selection1.images);
-
-            selection1.images.forEach(imageObj => {
-                const img = document.createElement('img');
-                img.src = `./mobbin/${imageObj.image}`;
-                img.className = 'img_mood';
-                img.dataset.imageName = imageObj.image;
-
-                const isSelected = isImageSelected(number, imageObj.image);
-                if (isSelected) {
-                    img.classList.add('selected');
+                const subtitle = document.querySelector('.lpblock-subtitle');
+                if (number === 4) {
+                    subtitle.textContent = "Voici l'interface choisie selon vos envies !";
+                } else {
+                    subtitle.textContent = "Choisissez l'interface qui vous inspire le plus :";
                 }
 
-                container.appendChild(img);
+                const prevButtonContainer = document.querySelector("#prev_button_link_container");
+                const prevButton = document.querySelector("#prev_button_link");
+                if (number === 4) {
+                    prevButton.textContent = "Recommencer";
+                    prevButton.href = `?number=1`;
+                } else if (number > 1) {
+                    prevButton.textContent = "Retour";
+                    prevButton.href = `?number=${number - 1}`;
+                } else {
+                    prevButtonContainer.style.display = "none";
+                }
 
-                img.addEventListener("click", () => {
-                    if (img.classList.contains('selected')) {
-                        img.classList.remove('selected');
-                        updateSelection(number, imageObj.image, false);
-                    } else {
-                        img.classList.add('selected');
-                        updateSelection(number, imageObj.image, true);
+                // Si `number` est égal à 4, envoyer directement les données et sortir
+                
+
+                const url = "http://127.0.0.1:5000/getInterface";
+
+                let jsonData = localStorage.getItem('cachedData');
+
+                if (!jsonData) {
+                    console.log("Fetching data from API...");
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error(`Erreur HTTP ! Statut : ${response.status}`);
                     }
-                    updateNextButtonVisibility();
+
+                    jsonData = await response.json();
+                    localStorage.setItem('cachedData', JSON.stringify(jsonData));
+                } else {
+                    console.log("Using cached data...");
+                    jsonData = JSON.parse(jsonData);
+                }
+
+                // Charger les sélections précédentes du cache
+                const cachedSelections = localStorage.getItem('selectedImages');
+                if (cachedSelections) {
+                    selectedImages = JSON.parse(cachedSelections);
+                }
+                if (number === 4) {
+                    updateProgress(number);
+                    console.log("Envoi des données au serveur...");
+                    console.log(selectedImages);
+                    await sendDataToServer(selectedImages);
+                    return;
+                }
+                // Réinitialiser les sélections pour la page actuelle
+                resetSelectionsForPage(number);
+
+                
+
+                const selection1 = jsonData.find(group => group.selection === number);
+                const container = document.querySelector('.img-mood-container');
+                container.innerHTML = "";
+
+                if (selection1) {
+                    initializeSelection(number, selection1.images);
+
+                    selection1.images.forEach(imageObj => {
+                        const img = document.createElement('img');
+                        img.src = `./mobbin/${imageObj.image}`;
+                        img.className = 'img_mood';
+                        img.dataset.imageName = imageObj.image;
+
+                        const isSelected = isImageSelected(number, imageObj.image);
+                        if (isSelected) {
+                            img.classList.add('selected');
+                        }
+
+                        container.appendChild(img);
+
+                        img.addEventListener("click", () => {
+                            if (img.classList.contains('selected')) {
+                                img.classList.remove('selected');
+                                updateSelection(number, imageObj.image, false);
+                            } else {
+                                img.classList.add('selected');
+                                updateSelection(number, imageObj.image, true);
+                            }
+                            updateNextButtonVisibility();
+                        });
+                    });
+                } else {
+                    console.error("Aucune donnée trouvée pour 'selection1'");
+                }
+
+                const nextButton = document.querySelector("#next_button_link");
+                nextButton.addEventListener("click", async () => {
+                    window.location.href = `?number=${number + 1}`;
                 });
+
+                updateProgress(number);
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+    function updateSelectionsForPage(number, jsonData) {
+        const currentGroup = selectedImages.find(item => item.selection === number);
+        if (!currentGroup) {
+            // Si aucun fichier n'a été sélectionné pour cette page, l'initialiser
+            const groupData = jsonData.find(group => group.selection === number);
+            if (groupData) {
+                initializeSelection(number, groupData.images);
+            }
+        }
+    }
+
+    function initializeSelection(selection, images) {
+        let group = selectedImages.find(item => item.selection === selection);
+        if (!group) {
+            group = { selection: selection, images: [] };
+            selectedImages.push(group);
+        }
+
+        images.forEach(imageObj => {
+            const existingImage = group.images.find(img => img.image === imageObj.image);
+            if (!existingImage) {
+                group.images.push({ image: imageObj.image, is_selected: false });
+            }
+        });
+
+        localStorage.setItem('selectedImages', JSON.stringify(selectedImages));
+    }
+
+    function clearCache() {
+        console.log("Nettoyage du cache...");
+        localStorage.removeItem('cachedData');
+        localStorage.removeItem('selectedImages');
+        console.log("Cache nettoyé avec succès.");
+    }
+
+    function updateSelection(selection, image, isSelected) {
+        let group = selectedImages.find(item => item.selection === selection);
+        if (!group) {
+            group = { selection: selection, images: [] };
+            selectedImages.push(group);
+        }
+
+        const imageEntry = group.images.find(img => img.image === image);
+        if (imageEntry) {
+            imageEntry.is_selected = isSelected;
+        } else {
+            group.images.push({ image: image, is_selected: isSelected });
+        }
+
+        localStorage.setItem('selectedImages', JSON.stringify(selectedImages));
+    }
+
+    function resetSelectionsForPage(number) {
+        let group = selectedImages.find(item => item.selection === number);
+        if (group) {
+            group.images.forEach(image => {
+                image.is_selected = false; // Réinitialiser toutes les images à non sélectionnées
             });
+            localStorage.setItem('selectedImages', JSON.stringify(selectedImages)); // Mettre à jour le cache
+        }
+    }
+
+
+    function isImageSelected(selection, image) {
+        const group = selectedImages.find(item => item.selection === selection);
+        if (!group) return false;
+
+        const imageEntry = group.images.find(img => img.image === image);
+        return imageEntry ? imageEntry.is_selected : false;
+    }
+
+    function updateNextButtonVisibility() {
+        const nextButton = document.getElementById('next_button');
+        const anySelected = document.querySelectorAll('.img-mood-container .selected').length > 0;
+
+        if (anySelected) {
+            nextButton.classList.add('creation_step_next_button--visible');
         } else {
-            console.error("Aucune donnée trouvée pour 'selection1'");
+            nextButton.classList.remove('creation_step_next_button--visible');
         }
+    }
 
-        const nextButton = document.querySelector("#next_button_link");
-        nextButton.addEventListener("click", async () => {
-            window.location.href = `?number=${number + 1}`;
+    async function sendDataToServer(data) {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/sendResult', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const contentType = response.headers.get('Content-Type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                console.error('Réponse inattendue du serveur :', text);
+                throw new Error('La réponse du serveur n\'est pas au format JSON.');
+            }
+
+            const result = await response.json();
+            console.log('Résultat reçu du serveur :', result);
+
+            if (result.image) {
+                displayImage(result.image);
+            } else {
+                console.error('Aucune image trouvée dans la réponse.');
+            }
+
+            //clearCache();
+        } catch (error) {
+            console.error('Erreur lors de l\'envoi des données :', error);
+        }
+    }
+
+    function displayImage(imagePath) {
+        const container = document.querySelector('.img-mood-container');
+        container.innerHTML = '';
+
+        const img = document.createElement('img');
+        img.src = `./images_gb/${imagePath}`;
+        img.alt = 'Image reçue du serveur';
+        img.className = 'img_mood';
+
+        container.appendChild(img);
+    }
+
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    function updateProgress(number) {
+        const steps = document.querySelectorAll('.creation_process_breadcrumb-progress-step');
+
+        steps.forEach((step, index) => {
+            const stepNumber = index + 1;
+
+            if (stepNumber < number) {
+                step.classList.add('creation_process_breadcrumb-progress-step--active');
+                step.classList.remove('creation_process_breadcrumb-progress-step--current');
+            } else if (stepNumber === number) {
+                step.classList.add('creation_process_breadcrumb-progress-step--active', 'creation_process_breadcrumb-progress-step--current');
+            } else {
+                step.classList.remove('creation_process_breadcrumb-progress-step--active', 'creation_process_breadcrumb-progress-step--current');
+            }
         });
-
-        updateProgress(number);
-    } catch (error) {
-        console.error('Erreur:', error);
-    }
-}
-
-function updateSelectionsForPage(number, jsonData) {
-    const currentGroup = selectedImages.find(item => item.selection === number);
-    if (!currentGroup) {
-        // Si aucun fichier n'a été sélectionné pour cette page, l'initialiser
-        const groupData = jsonData.find(group => group.selection === number);
-        if (groupData) {
-            initializeSelection(number, groupData.images);
-        }
-    }
-}
-
-function initializeSelection(selection, images) {
-    let group = selectedImages.find(item => item.selection === selection);
-    if (!group) {
-        group = { selection: selection, images: [] };
-        selectedImages.push(group);
     }
 
-    images.forEach(imageObj => {
-        const existingImage = group.images.find(img => img.image === imageObj.image);
-        if (!existingImage) {
-            group.images.push({ image: imageObj.image, is_selected: false });
-        }
-    });
-
-    localStorage.setItem('selectedImages', JSON.stringify(selectedImages));
-}
-
-function clearCache() {
-    console.log("Nettoyage du cache...");
-    localStorage.removeItem('cachedData');
-    localStorage.removeItem('selectedImages');
-    console.log("Cache nettoyé avec succès.");
-}
-
-function updateSelection(selection, image, isSelected) {
-    let group = selectedImages.find(item => item.selection === selection);
-    if (!group) {
-        group = { selection: selection, images: [] };
-        selectedImages.push(group);
-    }
-
-    const imageEntry = group.images.find(img => img.image === image);
-    if (imageEntry) {
-        imageEntry.is_selected = isSelected;
-    } else {
-        group.images.push({ image: image, is_selected: isSelected });
-    }
-
-    localStorage.setItem('selectedImages', JSON.stringify(selectedImages));
-}
-
-function resetSelectionsForPage(number) {
-    let group = selectedImages.find(item => item.selection === number);
-    if (group) {
-        group.images.forEach(image => {
-            image.is_selected = false; // Réinitialiser toutes les images à non sélectionnées
-        });
-        localStorage.setItem('selectedImages', JSON.stringify(selectedImages)); // Mettre à jour le cache
-    }
-}
+    // Charger les images au démarrage
+    loadImages();
 
 
-function isImageSelected(selection, image) {
-    const group = selectedImages.find(item => item.selection === selection);
-    if (!group) return false;
-
-    const imageEntry = group.images.find(img => img.image === image);
-    return imageEntry ? imageEntry.is_selected : false;
-}
-
-function updateNextButtonVisibility() {
-    const nextButton = document.getElementById('next_button');
-    const anySelected = document.querySelectorAll('.img-mood-container .selected').length > 0;
-
-    if (anySelected) {
-        nextButton.classList.add('creation_step_next_button--visible');
-    } else {
-        nextButton.classList.remove('creation_step_next_button--visible');
-    }
-}
-
-async function sendDataToServer(data) {
-    try {
-        const response = await fetch('http://127.0.0.1:5000/sendResult', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-
-        const contentType = response.headers.get('Content-Type');
-        if (!contentType || !contentType.includes('application/json')) {
-            const text = await response.text();
-            console.error('Réponse inattendue du serveur :', text);
-            throw new Error('La réponse du serveur n\'est pas au format JSON.');
-        }
-
-        const result = await response.json();
-        console.log('Résultat reçu du serveur :', result);
-
-        if (result.image) {
-            displayImage(result.image);
-        } else {
-            console.error('Aucune image trouvée dans la réponse.');
-        }
-
-        clearCache();
-    } catch (error) {
-        console.error('Erreur lors de l\'envoi des données :', error);
-    }
-}
-
-function displayImage(imagePath) {
-    const container = document.querySelector('.img-mood-container');
-    container.innerHTML = '';
-
-    const img = document.createElement('img');
-    img.src = `./images_gb/${imagePath}`;
-    img.alt = 'Image reçue du serveur';
-    img.className = 'img_mood';
-
-    container.appendChild(img);
-}
-
-function getQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-}
-
-function updateProgress(number) {
-    const steps = document.querySelectorAll('.creation_process_breadcrumb-progress-step');
-
-    steps.forEach((step, index) => {
-        const stepNumber = index + 1;
-
-        if (stepNumber < number) {
-            step.classList.add('creation_process_breadcrumb-progress-step--active');
-            step.classList.remove('creation_process_breadcrumb-progress-step--current');
-        } else if (stepNumber === number) {
-            step.classList.add('creation_process_breadcrumb-progress-step--active', 'creation_process_breadcrumb-progress-step--current');
-        } else {
-            step.classList.remove('creation_process_breadcrumb-progress-step--active', 'creation_process_breadcrumb-progress-step--current');
-        }
-    });
-}
-
-// Charger les images au démarrage
-loadImages();
-
-
-console.log("selectedimlage : ", selectedImages);
+    console.log("selectedimlage : ", selectedImages);
 
     </script>
     
