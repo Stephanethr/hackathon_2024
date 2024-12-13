@@ -49,8 +49,9 @@ def comparaisonHexList(listChoice:list,listBase:list)->float:
         rgbChoice = conversionHex(listChoice[i])
         rgbBase = conversionHex(listBase[i])
         for j in range(len(listChoice)):
-            res += min(rgbChoice[j],rgbBase[j])/max(rgbChoice[j],rgbBase[j])
-        return res/9
+            res += (min(rgbChoice[j],rgbBase[j])+1)/(max(rgbChoice[j],rgbBase[j])+1)
+    return res/9
+ #pour la liste le return est en dehors de la boucle i, et j'ai rajouté un +1 car il y avait de la division par 0 par moment
     
 #comparaisonfloat
 def comparaisonFloat(dictChoice:dict,dictBase:dict,value:str)->float:
