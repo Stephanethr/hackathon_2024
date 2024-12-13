@@ -71,8 +71,22 @@ def build_dictionaries(selections_data):
 def compare_images(selected_image, all_images):
     return random.randint(0, 100)
 
+
+def prepare_data(selections_data):
+    selected_images = []
+    all_images = []
+
+    for item in selections_data:
+        for image_info in item["images"]:
+            all_images.append(image_info)
+            if image_info["is_selected"]:
+                selected_images.append(image_info)
+
+    return selected_images, all_images
+
+
 def main(selections_data):
-    selected_images, all_images = build_dictionaries(selections_data)
+    selected_images, all_images = prepare_data(selections_data)
     max_score = 0
     max_image_name = None
 
