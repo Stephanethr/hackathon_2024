@@ -532,6 +532,7 @@ c60 -45 68 -74 68 -239 0 -172 -11 -208 -73 -247 -31 -19 -50 -22 -114 -21
     function displayImage(imagePath) {
         const container = document.querySelector('.img-mood-container');
         container.innerHTML = '';
+        console.log("Image reçue du serveur :", imagePath);
 
         const img = document.createElement('img');
         img.src = `./images_gb/${imagePath}`;
