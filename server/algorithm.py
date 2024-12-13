@@ -54,17 +54,14 @@ def build_all_images_criteria(criteria_file):
 
     return all_images
 
-def build_dictionaries():
+def build_dictionaries(selections_data):
     # Chemin du fichier des critères pour les images sélectionnées (racine du projet)
     selected_criteria_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), "description_images_autres.json")
-    # Chemin du fichier des sélections (racine du projet)
-    selections_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), "selection.json")
-
     # Chemin du fichier des critères pour toutes les images (racine du projet)
     all_images_criteria_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), "description_images_gb.json")
 
     # Générer la liste des critères des images sélectionnées
-    selected_images = build_selected_images_criteria(selected_criteria_file, selections_file)
+    selected_images = build_selected_images_criteria(selected_criteria_file, selections_data)
 
     # Générer la liste des critères pour toutes les images
     all_images = build_all_images_criteria(all_images_criteria_file)
@@ -74,23 +71,20 @@ def build_dictionaries():
 def compare_images(selected_image, all_images):
     return random.randint(0, 100)
 
-def main():
-    selected_images, all_images = build_dictionaries()
+def main(selections_data):
+    selected_images, all_images = build_dictionaries(selections_data)
     max_score = 0
     max_image_name = None
 
     for gb_image in all_images:
         score = 0
         for selected_image in selected_images:
-            print(selected_image['criteria'])
-            score += extract.score(selected_image['criteria'], gb_image['criteria'])
+            score += compare_images(selected_image, gb_image)
         score /= len(selected_images)
 
         if score > max_score:
             max_score = score
             max_image_name = gb_image["image"]
 
-    print(max_image_name)
-    print(max_score)
+    return max_image_name
 
-main()

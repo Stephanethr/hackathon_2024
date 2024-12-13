@@ -6,6 +6,7 @@ from werkzeug.datastructures import FileStorage
 import base64
 # from algo import algo
 from flask_cors import CORS
+import algorithm as algo
 
 # Activer CORS sur l'application Flask
 
@@ -62,14 +63,12 @@ def send_result():
         if not isinstance(data, list):
             return jsonify({"error": "Invalid format, expected a list of dictionaries"}), 400
 
-        # Retourner l'image directement
-        return jsonify({"image": temp(data)})
+        # Exécuter l'algorithme avec les données reçues
+        result_image = algo.main(data)
+        return jsonify({"image": result_image})
 
     except Exception as e:
         return jsonify({"error": f"Error processing data: {str(e)}"}), 400
-
-def temp(json):
-    return "ecommerce_349_tabbar_withmenu@2x.webp"
-
+    
 if __name__ == "__main__":
     app.run(debug=True)
