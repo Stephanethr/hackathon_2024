@@ -62,14 +62,8 @@ def send_result():
         if not isinstance(data, list):
             return jsonify({"error": "Invalid format, expected a list of dictionaries"}), 400
 
-        # Construire le chemin vers l'image générée
-        image_path = os.path.join(app.config['GB_FOLDER'], temp(data))
-
-        if not os.path.exists(image_path):
-            return jsonify({"error": "Image not found"}), 404
-
         # Retourner l'image directement
-        return send_file(image_path, mimetype='image/webp')
+        return jsonify({"image": temp(data)})
 
     except Exception as e:
         return jsonify({"error": f"Error processing data: {str(e)}"}), 400

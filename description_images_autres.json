@@ -170,7 +170,7 @@
     {
         "image": "a screens 6.png",
         "criteria": {
-            "typeSite": "dashboard",
+            "typeSite": "eshop",
             "typeMENU": "none",
             "couleurDominante": "#FFFFFF",
             "paletteCouleurs": [
@@ -282,7 +282,7 @@
     {
         "image": "a screens 10.png",
         "criteria": {
-            "typeSite": "vitrine",
+            "typeSite": "eshop",
             "typeMENU": "barre_flotante",
             "couleurDominante": "#000000",
             "paletteCouleurs": [
@@ -310,7 +310,7 @@
     {
         "image": "a screens 11.png",
         "criteria": {
-            "typeSite": "restaurant",
+            "typeSite": "eshop",
             "typeMENU": "lateral",
             "couleurDominante": "#4CAF50",
             "paletteCouleurs": [
