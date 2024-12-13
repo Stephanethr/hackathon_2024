@@ -387,6 +387,7 @@ c60 -45 68 -74 68 -239 0 -172 -11 -208 -73 -247 -31 -19 -50 -22 -114 -21
                         const isSelected = isImageSelected(number, imageObj.image);
                         if (isSelected) {
                             img.classList.add('selected');
+                            img.className = 'img_mood_zoomed'
                         }
 
                         container.appendChild(img);
@@ -398,6 +399,7 @@ c60 -45 68 -74 68 -239 0 -172 -11 -208 -73 -247 -31 -19 -50 -22 -114 -21
                             } else {
                                 img.classList.add('selected');
                                 updateSelection(number, imageObj.image, true);
+                                
                             }
                             updateNextButtonVisibility();
                         });
@@ -490,11 +492,14 @@ c60 -45 68 -74 68 -239 0 -172 -11 -208 -73 -247 -31 -19 -50 -22 -114 -21
 
     function updateNextButtonVisibility() {
         const nextButton = document.getElementById('next_button');
+        console.log("nextButton : ", nextButton);
         const anySelected = document.querySelectorAll('.img-mood-container .selected').length > 0;
 
         if (anySelected) {
+            console.log("lala : ");
             nextButton.classList.add('creation_step_next_button--visible');
         } else {
+            console.log("lala2 : ");
             nextButton.classList.remove('creation_step_next_button--visible');
         }
     }
