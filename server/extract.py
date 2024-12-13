@@ -3,8 +3,8 @@ from PIL import ImageColor
 PONDERATION = {
     "typeSite":10, #str
     "typeMENU":0.3, #str
-    "couleurDominante":6, #Hex
-    "paletteCouleurs":4, #Hex
+    "couleurDominante":8, #Hex
+    "paletteCouleurs":6, #Hex
     "contraste":2, #float
     "scroll":0.1, #str
     "nbElement":0.05, #int
@@ -61,14 +61,17 @@ def score(dictChoice:dict,dictBase:dict)->float:
     global PONDERATION
     value = 0
     for e in dictBase:
-        if isinstance(e,str) or isinstance(e,bool):
-            res = comparaison(dictBase,dictChoice,e)
-        elif isinstance(e,float):
+        if isinstance(dictBase[e],str):
+            if dictBase[e][0]=='#':
+                res = comparaisonHex(dictChoice,dictBase,e)
+            else:
+                res = comparaison(dictBase,dictChoice,e)
+        elif isinstance(dictBase[e],bool):
+            res = comparaison(dictBase, dictChoice, e)
+        elif isinstance(dictBase[e],float):
             res = comparaisonFloat(dictChoice,dictBase,e)
-        elif isinstance(e,list):
+        elif isinstance(dictBase[e],list):
             res = comparaisonHexList(dictChoice[e], dictBase[e])
-        else:
-            res = comparaisonHex(dictChoice,dictBase,e)
         value += res * PONDERATION[e]
     return value
     
