@@ -1,14 +1,11 @@
-import json
-import numpy as np
-from collections import Counter
 from PIL import ImageColor
 
 PONDERATION = {
-    "typeSite":1, #str
+    "typeSite":10, #str
     "typeMENU":0.3, #str
-    "couleurDominante":0.3, #Hex
-    "paletteCouleurs":0.2, #Hex
-    "contraste":0.3, #float
+    "couleurDominante":6, #Hex
+    "paletteCouleurs":4, #Hex
+    "contraste":2, #float
     "scroll":0.1, #str
     "nbElement":0.05, #int
     "elementSize":0.15, #float
@@ -64,7 +61,6 @@ def score(dictChoice:dict,dictBase:dict)->float:
     global PONDERATION
     value = 0
     for e in dictBase:
-
         if isinstance(e,str) or isinstance(e,bool):
             res = comparaison(dictBase,dictChoice,e)
         elif isinstance(e,float):
