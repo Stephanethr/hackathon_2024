@@ -307,106 +307,256 @@ c60 -45 68 -74 68 -239 0 -172 -11 -208 -73 -247 -31 -19 -50 -22 -114 -21
     </main>
 
     <script>
-        
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
-        }
-        // Fonction pour charger les données JSON
+        let selectedImages = [];
         async function loadImages() {
-            try {
-                const url = "http://127.0.0.1:5000/getInterface";
-                const response = await fetch(url);
-                // Vérifier si la réponse est OK
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP ! Statut : ${response.status}`);
-                }
+    try {
+        let number = parseInt(getQueryParam("number")) || 1;
 
-                // Convertir la réponse en JSON
-                const jsonData = await response.json();
-                console.log(jsonData)
-                let number = parseInt(getQueryParam("number")) || 1;
+        // Si `number` est égal à 4, envoyer directement les données et sortir
+        if (number === 4) {
+            updateProgress(number);
+            console.log("Envoi des données au serveur...");
+            console.log(selectedImages);
+            await sendDataToServer(selectedImages);
+            return;
+        }
 
-                const prevButtonContainer = document.querySelector("#prev_button_link_container");
-                const prevButton = document.querySelector("#prev_button_link");
-                if (number > 1) {
-                    prevButton.href = `?number=${number - 1}`;
+        const url = "http://127.0.0.1:5000/getInterface";
 
-                    console.log(number)
-                } else {
-                    // Cacher le bouton "Retour" si `number` est déjà 1
-                    prevButtonContainer.style.display = "none";
-                }
-                // Filtrer pour trouver uniquement "selection1"
-                const selection = "selection" + number;
-                const selection1 = jsonData.find(group => group.selection%3 === selection);
-                console.log(selection1)
-    
-                // Sélectionner le conteneur
-                const container = document.querySelector('.img-mood-container');
-    
-                // Ajouter les images de "selection1"
-                if (selection1) {
-                    selection1.images.forEach(imageObj => {
-                        const img = document.createElement('img');
-                        img.src = `./images_selection/${selection}/${imageObj.image}`;
-                        img.className = 'img_mood';
-                        container.appendChild(img);
+        let jsonData = localStorage.getItem('cachedData');
 
-                        img.addEventListener("click", () => {
-                        // Retirer la classe 'zoomed' de toutes les images
-                        document.querySelectorAll('.img_mood').forEach(image => {
-                            image.classList.remove('zoomed');
-                        });
+        if (!jsonData) {
+            console.log("Fetching data from API...");
+            const response = await fetch(url);
 
-                        // Ajouter la classe 'zoomed' à l'image cliquée
-                        img.classList.add('zoomed');
-                    });
-                    });
-                } else {
-                    console.error("Aucune donnée trouvée pour 'selection1'");
-                }
-
-                const nextButton = document.querySelector("#next_button_link");
-                    nextButton.addEventListener("click", () => {
-                        // Rediriger vers la même page avec un `number` incrémenté
-                        window.location.href = `?number=${number + 1}`;
-                    });
-                updateProgress(number);
-            } catch (error) {
-                console.error('Erreur:', error);
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP ! Statut : ${response.status}`);
             }
+
+            jsonData = await response.json();
+            localStorage.setItem('cachedData', JSON.stringify(jsonData));
+        } else {
+            console.log("Using cached data...");
+            jsonData = JSON.parse(jsonData);
         }
 
-        function updateProgress(number) {
-            // Sélectionner tous les éléments de progression
-            const steps = document.querySelectorAll('.creation_process_breadcrumb-progress-step');
+        // Charger les sélections précédentes du cache
+        const cachedSelections = localStorage.getItem('selectedImages');
+        if (cachedSelections) {
+            selectedImages = JSON.parse(cachedSelections);
+        }
 
-            steps.forEach((step, index) => {
-                const stepNumber = index + 1;
+        // Réinitialiser les sélections pour la page actuelle
+        resetSelectionsForPage(number);
 
-                // Ajouter ou supprimer les classes en fonction de `number`
-                if (stepNumber < number) {
-                    step.classList.add('creation_process_breadcrumb-progress-step--active');
-                    step.classList.remove('creation_process_breadcrumb-progress-step--current');
-                } else if (stepNumber === number) {
-                    step.classList.add('creation_process_breadcrumb-progress-step--active', 'creation_process_breadcrumb-progress-step--current');
-                } else {
-                    step.classList.remove('creation_process_breadcrumb-progress-step--active', 'creation_process_breadcrumb-progress-step--current');
+        const prevButtonContainer = document.querySelector("#prev_button_link_container");
+        const prevButton = document.querySelector("#prev_button_link");
+        if (number === 4) {
+            prevButton.href = `?number=1`;
+        } else if (number > 1) {
+            prevButton.href = `?number=${number - 1}`;
+        } else {
+            prevButtonContainer.style.display = "none";
+        }
+
+        const selection1 = jsonData.find(group => group.selection === number);
+        const container = document.querySelector('.img-mood-container');
+        container.innerHTML = "";
+
+        if (selection1) {
+            initializeSelection(number, selection1.images);
+
+            selection1.images.forEach(imageObj => {
+                const img = document.createElement('img');
+                img.src = `./mobbin/${imageObj.image}`;
+                img.className = 'img_mood';
+                img.dataset.imageName = imageObj.image;
+
+                const isSelected = isImageSelected(number, imageObj.image);
+                if (isSelected) {
+                    img.classList.add('selected');
                 }
+
+                container.appendChild(img);
+
+                img.addEventListener("click", () => {
+                    if (img.classList.contains('selected')) {
+                        img.classList.remove('selected');
+                        updateSelection(number, imageObj.image, false);
+                    } else {
+                        img.classList.add('selected');
+                        updateSelection(number, imageObj.image, true);
+                    }
+                    updateNextButtonVisibility();
+                });
             });
+        } else {
+            console.error("Aucune donnée trouvée pour 'selection1'");
         }
 
+        const nextButton = document.querySelector("#next_button_link");
+        nextButton.addEventListener("click", async () => {
+            window.location.href = `?number=${number + 1}`;
+        });
 
-        var cards = document.getElementsByClassName("img-mood-container");
-        Array.prototype.forEach.call(cards, function(card) {
-            card.addEventListener("click", function(event) {
-                document.getElementById('next_button').classList.add('creation_step_next_button--visible');
-            });
-        });;
-    
-        // Appeler la fonction au chargement de la page
-        loadImages();
+        updateProgress(number);
+    } catch (error) {
+        console.error('Erreur:', error);
+    }
+}
+
+function updateSelectionsForPage(number, jsonData) {
+    const currentGroup = selectedImages.find(item => item.selection === number);
+    if (!currentGroup) {
+        // Si aucun fichier n'a été sélectionné pour cette page, l'initialiser
+        const groupData = jsonData.find(group => group.selection === number);
+        if (groupData) {
+            initializeSelection(number, groupData.images);
+        }
+    }
+}
+
+function initializeSelection(selection, images) {
+    let group = selectedImages.find(item => item.selection === selection);
+    if (!group) {
+        group = { selection: selection, images: [] };
+        selectedImages.push(group);
+    }
+
+    images.forEach(imageObj => {
+        const existingImage = group.images.find(img => img.image === imageObj.image);
+        if (!existingImage) {
+            group.images.push({ image: imageObj.image, is_selected: false });
+        }
+    });
+
+    localStorage.setItem('selectedImages', JSON.stringify(selectedImages));
+}
+
+function clearCache() {
+    console.log("Nettoyage du cache...");
+    localStorage.removeItem('cachedData');
+    localStorage.removeItem('selectedImages');
+    console.log("Cache nettoyé avec succès.");
+}
+
+function updateSelection(selection, image, isSelected) {
+    let group = selectedImages.find(item => item.selection === selection);
+    if (!group) {
+        group = { selection: selection, images: [] };
+        selectedImages.push(group);
+    }
+
+    const imageEntry = group.images.find(img => img.image === image);
+    if (imageEntry) {
+        imageEntry.is_selected = isSelected;
+    } else {
+        group.images.push({ image: image, is_selected: isSelected });
+    }
+
+    localStorage.setItem('selectedImages', JSON.stringify(selectedImages));
+}
+
+function resetSelectionsForPage(number) {
+    let group = selectedImages.find(item => item.selection === number);
+    if (group) {
+        group.images.forEach(image => {
+            image.is_selected = false; // Réinitialiser toutes les images à non sélectionnées
+        });
+        localStorage.setItem('selectedImages', JSON.stringify(selectedImages)); // Mettre à jour le cache
+    }
+}
+
+
+function isImageSelected(selection, image) {
+    const group = selectedImages.find(item => item.selection === selection);
+    if (!group) return false;
+
+    const imageEntry = group.images.find(img => img.image === image);
+    return imageEntry ? imageEntry.is_selected : false;
+}
+
+function updateNextButtonVisibility() {
+    const nextButton = document.getElementById('next_button');
+    const anySelected = document.querySelectorAll('.img-mood-container .selected').length > 0;
+
+    if (anySelected) {
+        nextButton.classList.add('creation_step_next_button--visible');
+    } else {
+        nextButton.classList.remove('creation_step_next_button--visible');
+    }
+}
+
+async function sendDataToServer(data) {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/sendResult', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        const contentType = response.headers.get('Content-Type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Réponse inattendue du serveur :', text);
+            throw new Error('La réponse du serveur n\'est pas au format JSON.');
+        }
+
+        const result = await response.json();
+        console.log('Résultat reçu du serveur :', result);
+
+        if (result.image) {
+            displayImage(result.image);
+        } else {
+            console.error('Aucune image trouvée dans la réponse.');
+        }
+
+        clearCache();
+    } catch (error) {
+        console.error('Erreur lors de l\'envoi des données :', error);
+    }
+}
+
+function displayImage(imagePath) {
+    const container = document.querySelector('.img-mood-container');
+    container.innerHTML = '';
+
+    const img = document.createElement('img');
+    img.src = `./images_gb/${imagePath}`;
+    img.alt = 'Image reçue du serveur';
+    img.className = 'img_mood';
+
+    container.appendChild(img);
+}
+
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+function updateProgress(number) {
+    const steps = document.querySelectorAll('.creation_process_breadcrumb-progress-step');
+
+    steps.forEach((step, index) => {
+        const stepNumber = index + 1;
+
+        if (stepNumber < number) {
+            step.classList.add('creation_process_breadcrumb-progress-step--active');
+            step.classList.remove('creation_process_breadcrumb-progress-step--current');
+        } else if (stepNumber === number) {
+            step.classList.add('creation_process_breadcrumb-progress-step--active', 'creation_process_breadcrumb-progress-step--current');
+        } else {
+            step.classList.remove('creation_process_breadcrumb-progress-step--active', 'creation_process_breadcrumb-progress-step--current');
+        }
+    });
+}
+
+// Charger les images au démarrage
+loadImages();
+
+
+console.log("selectedimlage : ", selectedImages);
+
     </script>
     
 
