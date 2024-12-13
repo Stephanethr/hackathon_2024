@@ -87,6 +87,7 @@ def main(json):
         score = 0
         for selected_image in selected_images:
             score += extract.score(selected_image['criteria'], gb_image['criteria'])
+            score += extract.score(selected_image['criteria'], gb_image['criteria'])
         score /= len(selected_images)
 
         if score > max_score:
