@@ -5,7 +5,7 @@ from PIL import ImageColor
 
 PONDERATION = {
     "typeSite":1, #str
-    "typeMenu":0.3, #str
+    "typeMENU":0.3, #str
     "couleurDominante":0.3, #Hex
     "paletteCouleurs":0.2, #Hex
     "contraste":0.3, #float
@@ -27,6 +27,7 @@ PONDERATION = {
 
 #retourne le score de comparaison entre deux valeurs de même clé de deux dictionnaires
 def comparaison(dictChoice:dict, dictBase:dict,value:str)->int:
+
     if dictChoice[value]==dictBase[value]:
         return 1
     else:
@@ -63,6 +64,7 @@ def score(dictChoice:dict,dictBase:dict)->float:
     global PONDERATION
     value = 0
     for e in dictBase:
+
         if isinstance(e,str) or isinstance(e,bool):
             res = comparaison(dictBase,dictChoice,e)
         elif isinstance(e,float):

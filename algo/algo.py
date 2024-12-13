@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import extract
 
 # Charger le JSON des critères
 def load_criteria(file_path):
@@ -81,7 +82,8 @@ def main():
     for gb_image in all_images:
         score = 0
         for selected_image in selected_images:
-            score += compare_images(selected_image, gb_image)
+            print(selected_image['criteria'])
+            score += extract.score(selected_image['criteria'], gb_image['criteria'])
         score /= len(selected_images)
 
         if score > max_score:
